@@ -5,7 +5,7 @@
  * python backend/train_ai.py
  * python -m backend.seed
  */
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = 'https://aqarak-backend-vehj.onrender.com';
 // ====================================================================
 // دوال مساعدة (Helper Functions)
 // ====================================================================
