@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Details | Aqarak</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="styles/details.css">
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="index.html">
+            <i class="fa-solid fa-house-chimney-auto me-2 text-primary"></i>Aqarak
+        </a>
+        <div class="ms-auto">
+            <a class="nav-link-custom" href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ── Loading State (shown until data loads) ── -->
+<div id="pageLoader" class="page-loader">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="fw-500">Loading property details...</span>
+</div>
+
+<!-- ── Main Content (hidden until data loads) ── -->
+<div id="pageContent" class="container py-5" style="display:none;">
+    <div class="row g-4">
+
+        <!-- ══ Left Column ══ -->
+        <div class="col-lg-8">
+
+            <!-- Image -->
+            <div class="position-relative fade-up">
+                <div class="main-image-container">
+                    <div id="imageFallback" class="image-fallback">
+                        <i class="fa-solid fa-image"></i>
+                        <span>No image available</span>
+                    </div>
+                    <img id="mainPropertyImage" src="" alt="Property Image" style="display:none;">
+                </div>
+                <button id="favBtn" class="position-absolute fav-btn-float">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <!-- Title & Features -->
+            <div class="info-card fade-up">
+                <h1 id="propTitle" class="fw-bold mb-2" style="font-family:'Playfair Display',serif; letter-spacing:-0.03em;">Loading...</h1>
+                <p class="mb-0" style="color:var(--text-secondary); font-size:1.1rem;">
+                    <i class="fa-solid fa-location-dot me-2" style="color:var(--danger);"></i>
+                    <span id="propLocation">...</span>
+                </p>
+                <hr class="my-4" style="border-color:var(--border);">
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-expand"></i></div>
+                        <div class="feature-value" id="propArea">-</div>
+                        <div class="feature-label">Area</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-bed"></i></div>
+                        <div class="feature-value" id="propBedrooms">-</div>
+                        <div class="feature-label">Bedrooms</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-bath"></i></div>
+                        <div class="feature-value" id="propBathrooms">-</div>
+                        <div class="feature-label">Bathrooms</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-building"></i></div>
+                        <div class="feature-value" id="propType">-</div>
+                        <div class="feature-label">Type</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="info-card fade-up">
+                <h4 class="section-title">About this Property</h4>
+                <p id="propDescription" class="lh-lg" style="color:var(--text-secondary); font-size:1.05rem;">...</p>
+            </div>
+
+            <!-- Location & Nearby -->
+            <div class="info-card fade-up">
+                <h4 class="section-title">Location & Lifestyle</h4>
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-7">
+                        <h6 class="fw-bold mb-4" style="color:var(--text-secondary);">
+                            <i class="fa-solid fa-walking me-2"></i>Nearby Landmarks
+                        </h6>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="nearby-icon me-3"><i class="fa-solid fa-school"></i></div>
+                            <div>
+                                <p class="mb-0 fw-bold" style="font-size:0.92rem;">Educational Hub</p>
+                                <small class="text-muted">10-15 mins</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="nearby-icon me-3"><i class="fa-solid fa-cart-shopping"></i></div>
+                            <div>
+                                <p class="mb-0 fw-bold" style="font-size:0.92rem;">Shopping Center</p>
+                                <small class="text-muted">Walking distance</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="map-card">
+                            <i class="fa-solid fa-map-location-dot fa-3x mb-3" style="color:var(--accent);"></i>
+                            <h6 class="fw-bold">Google Maps</h6>
+                            <p class="small text-muted mb-4">View exact location and directions.</p>
+                            <button id="openMapBtn" class="btn btn-map w-100">
+                                <i class="fa-solid fa-location-arrow me-2"></i>Open Map
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ Right Column — Sidebar ══ -->
+        <div class="col-lg-4">
+            <div class="sticky-sidebar">
+                <div class="info-card" style="box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                    <p class="text-muted mb-1 small fw-bold" style="letter-spacing:0.05em;">PROPERTY PRICE</p>
+                    <div id="propPrice" class="price-tag mb-1">$0</div>
+                    <div id="interestAmountDisplay" class="small fw-bold mb-4" style="display:none; color:var(--danger);">
+                        + $0 Interest
+                    </div>
+                    
+                    <div class="ai-badge mb-4">
+                        <div class="ai-icon"><i class="fa-solid fa-robot"></i></div>
+                        <div>
+                            <h6 class="mb-1 fw-bold" style="font-size:0.9rem;">Aqarak Analysis</h6>
+                            <p id="aiVerdict" class="small mb-0 fw-600" style="color:var(--text-secondary);">Processing...</p>
+                        </div>
+                    </div>
+
+                    <div class="payment-selector">
+                        <button id="cashBtn" class="active">Full Cash</button>
+                        <button id="installBtn">Installments</button>
+                    </div>
+
+                    <div id="installmentBox" class="d-none">
+                        <div class="slider-container">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="small fw-bold">Term Period</span>
+                                <span class="years-badge"><span id="yearsVal">10</span> Years</span>
+                            </div>
+                            <input type="range" class="form-range" id="yearsSlider" min="10" max="15" step="1" value="10">
+                            <hr>
+                            <div class="text-center">
+                                <p class="small text-muted mb-0">Monthly Payment</p>
+                                <h3 id="monthlyResult" class="fw-bold" style="color:var(--success);">$0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="bookBtn" class="btn-book">
+                        <i class="fa-solid fa-calendar-check me-2"></i>Book Viewing
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const API_URL = "http://127.0.0.1:8000";
+    const urlParams = new URLSearchParams(window.location.search);
+    const propId = urlParams.get('id');
+    const token = localStorage.getItem('token');
+
+    let currentPrice = 0;
+    let selectedType = "Full Cash";
+    let selectedYears = null;
+    const interestRates = { 10: 0.10, 11: 0.12, 12: 0.14, 13: 0.16, 14: 0.18, 15: 0.20 };
+
+    // ── Show/hide page states ──
+    function showContent() {
+        document.getElementById('pageLoader').style.display = 'none';
+        document.getElementById('pageContent').style.display = 'block';
+    }
+
+    function showError(title, text) {
+        document.getElementById('pageLoader').style.display = 'none';
+        Swal.fire({ icon: 'error', title: title, text: text, confirmButtonColor: '#1b2c55' })
+            .then(() => window.location.href = 'index.html');
+    }
+
+    // ── Load property details ──
+    async function loadPropertyDetails() {
+        if (!propId) {
+            showError('Invalid Link', 'No property ID found in the URL.');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/properties/${propId}`);
+            if (!res.ok) {
+                showError('Not Found', 'This property does not exist or has been removed.');
+                return;
+            }
+
+            const prop = await res.json();
+            currentPrice = prop.price;
+
+            // Fill text fields
+            document.getElementById('propTitle').textContent = prop.title;
+            document.getElementById('propLocation').textContent = prop.city;
+            document.getElementById('propArea').textContent = prop.area + " m²";
+            document.getElementById('propBedrooms').textContent = prop.bedrooms || 0;
+            document.getElementById('propBathrooms').textContent = prop.bathrooms || 0;
+            document.getElementById('propType').textContent = prop.property_type;
+            document.getElementById('propDescription').textContent = prop.description || "No description available.";
+            document.getElementById('propPrice').textContent = "$" + Number(prop.price).toLocaleString();
+
+            // Image handling with fallback
+            const mainImg = document.getElementById('mainPropertyImage');
+            const fallback = document.getElementById('imageFallback');
+
+            if (prop.main_image) {
+                const cleanApiUrl = API_URL.replace(/\/$/, '');
+                const cleanPath = prop.main_image.replace(/^\//, '');
+                const imgUrl = prop.main_image.startsWith('http') ? prop.main_image : `${cleanApiUrl}/${cleanPath}`;
+
+                mainImg.onload = function() {
+                    this.style.display = 'block';
+                    fallback.style.display = 'none';
+                };
+                mainImg.onerror = function() {
+                    this.style.display = 'none';
+                    fallback.style.display = 'flex';
+                };
+                mainImg.src = imgUrl;
+            }
+
+            // Google Maps button
+            document.getElementById('openMapBtn').onclick = function() {
+                if (prop.lat && prop.lng) {
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${prop.lat},${prop.lng}`, '_blank');
+                } else {
+                    Swal.fire({ icon: 'info', title: 'No Coordinates', text: 'Map location is not available for this property.', confirmButtonColor: '#1b2c55' });
+                }
+            };
+
+            showContent();
+            checkInitialFavorite();
+            analyzePriceWithAI(prop.price, prop.area, prop.city);
+
+        } catch (e) {
+            console.error("Error loading property:", e);
+            showError('Connection Error', 'Could not connect to the server. Please try again.');
+        }
+    }
+
+    // ── Payment toggle ──
+    document.getElementById('cashBtn').onclick = function() {
+        selectedType = "Full Cash"; selectedYears = null;
+        this.classList.add('active');
+        document.getElementById('installBtn').classList.remove('active');
+        document.getElementById('installmentBox').classList.add('d-none');
+        document.getElementById('interestAmountDisplay').style.display = "none";
+    };
+
+    document.getElementById('installBtn').onclick = function() {
+        selectedType = "Installments";
+        this.classList.add('active');
+        document.getElementById('cashBtn').classList.remove('active');
+        document.getElementById('installmentBox').classList.remove('d-none');
+        calculateMonthly();
+    };
+
+    document.getElementById('yearsSlider').oninput = calculateMonthly;
+
+    function calculateMonthly() {
+        selectedYears = parseInt(document.getElementById('yearsSlider').value);
+        document.getElementById('yearsVal').textContent = selectedYears;
+        const rate = interestRates[selectedYears];
+        const totalInterest = currentPrice * rate;
+        const totalToInstall = (currentPrice * 0.75) + totalInterest;
+        const monthly = totalToInstall / (selectedYears * 12);
+        document.getElementById('monthlyResult').textContent = "$" + Math.round(monthly).toLocaleString();
+        
+        const interestDisplay = document.getElementById('interestAmountDisplay');
+        interestDisplay.style.display = "block";
+        interestDisplay.textContent = `+ $${Math.round(totalInterest).toLocaleString()} Interest (${rate * 100}%)`;
+    }
+
+    // ── Booking ──
+    document.getElementById('bookBtn').onclick = async function() {
+        if (!token) {
+            Swal.fire({ icon: 'info', title: 'Login Required', text: 'Please login to book a viewing.', confirmButtonColor: '#1b2c55' })
+                .then(() => window.location.href = "login.html");
+            return;
+        }
+
+        const btn = this;
+        const originalHTML = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Sending...';
+
+        try {
+            const res = await fetch(`${API_URL}/bookings/create`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ property_id: propId, payment_preference: selectedType, install_years: selectedYears })
+            });
+            if (res.ok) { 
+                Swal.fire({ icon: 'success', title: 'Request Sent!', text: 'Your viewing request has been sent successfully.', confirmButtonColor: '#1b2c55' });
+                btn.innerHTML = '<i class="fa-solid fa-check me-2"></i> Request Sent';
+            } else {
+                const error = await res.json();
+                Swal.fire('Error', error.detail || 'Could not process booking.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        } catch (e) { 
+            Swal.fire('Error', 'Server connection error.', 'error'); 
+            btn.disabled = false;
+            btn.innerHTML = originalHTML;
+        }
+    };
+
+    // ── Favorites ──
+    document.getElementById('favBtn').onclick = async function() {
+        if (!token) {
+            Swal.fire('Info', 'Please login to save favorites.', 'info');
+            return;
+        }
+        try {
+            const res = await fetch(`${API_URL}/properties/${propId}/favorite`, { 
+                method: 'POST', headers: { 'Authorization': `Bearer ${token}` } 
+            });
+            const data = await res.json();
+            const icon = this.querySelector('i');
+            if (data.status === "added") {
+                icon.classList.replace('fa-regular', 'fa-solid');
+                Swal.fire({ icon: 'success', title: 'Added!', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+            } else {
+                icon.classList.replace('fa-solid', 'fa-regular');
+                Swal.fire({ icon: 'info', title: 'Removed', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+            }
+        } catch (e) { Swal.fire('Error', 'Error updating favorites.', 'error'); }
+    };
+
+    async function checkInitialFavorite() {
+        if (!token) return;
+        try {
+            const res = await fetch(`${API_URL}/favorites/check/${propId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            if (data.is_favorite) document.querySelector('#favBtn i').classList.replace('fa-regular', 'fa-solid');
+        } catch (e) {}
+    }
+
+    // ── AI Analysis (XSS-safe) ──
+    async function analyzePriceWithAI(p, a, c) {
+        const fd = new FormData();
+        fd.append('area', a);
+        fd.append('city', c);
+        try {
+            const res = await fetch(`${API_URL}/ai/predict-price`, { method: 'POST', body: fd });
+            const data = await res.json();
+            const diff = ((p - data.suggested_price) / data.suggested_price) * 100;
+            const v = document.getElementById('aiVerdict');
+
+            if (diff < -5) {
+                v.textContent = "Underpriced! Good Deal.";
+                v.style.color = "var(--success)";
+            } else if (diff > 10) {
+                v.textContent = "Above Market Average.";
+                v.style.color = "var(--danger)";
+            } else {
+                v.textContent = "Fair Market Value.";
+                v.style.color = "var(--accent)";
+            }
+            v.style.fontWeight = "700";
+        } catch (e) {
+            const v = document.getElementById('aiVerdict');
+            v.textContent = "AI Analysis Unavailable";
+            v.style.color = "var(--text-muted)";
+        }
+    }
+
+    window.onload = loadPropertyDetails;
+</script>
+</body>
+</html>

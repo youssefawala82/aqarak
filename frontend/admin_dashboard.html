@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Aqarak</title>
+    <!-- المكتبات الأساسية -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة الرسوم البيانية -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- مكتبة التنبيهات الاحترافية -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="styles/admin_dashboard.css">
+</head>
+<body>
+
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- ====== الشريط الجانبي ====== -->
+        <div class="sidebar">
+            <div class="p-2 text-center mb-4">
+                <h4 class="fw-bold text-primary">Aqarak</h4>
+                <small class="text-muted">Super Admin</small>
+            </div>
+            <nav class="nav flex-column gap-2">
+                <a class="nav-link active" onclick="showSection('overview')">
+                    <i class="fa-solid fa-chart-line me-2"></i> <span>Overview</span>
+                </a>
+                <a class="nav-link" onclick="showSection('agents')">
+                    <i class="fa-solid fa-user-tie me-2"></i> <span>Manage Agents</span>
+                </a>
+                <a class="nav-link" onclick="showSection('users')">
+                    <i class="fa-solid fa-users me-2"></i> <span>All Users</span>
+                </a>
+                <a class="nav-link" onclick="showSection('properties')">
+                    <i class="fa-solid fa-building me-2"></i> <span>Properties</span>
+                </a>
+                <a class="nav-link" onclick="showSection('analytics')">
+                    <i class="fa-solid fa-chart-pie me-2"></i> <span>Analytics</span>
+                </a>
+                <hr class="text-white-50">
+                <a class="nav-link text-danger" href="#" onclick="logout()">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i> <span>Logout</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- ====== المحتوى الرئيسي ====== -->
+        <div class="main-content">
+            <header class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h3 id="sectionTitle" class="fw-bold mb-0">Platform Overview</h3>
+                    <p id="sectionSubTitle" class="text-muted small">Control everything from one place</p>
+                </div>
+                <div class="d-flex gap-3">
+                    <a href="index.html" class="btn-back-home">
+                        <i class="fa-solid fa-house"></i> Back to Home
+                    </a>
+                </div>
+            </header>
+
+            <!-- ====== قسم نظرة عامة (Overview) ====== -->
+            <div id="overviewSection" class="section-container active">
+                <!-- بطاقات الإحصائيات -->
+                <div class="row g-4 mb-5">
+                    <div class="col-md-4">
+                        <div class="card stat-card shadow-sm p-3 border-start border-primary border-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="icon-box bg-primary-subtle text-primary"><i class="fa-solid fa-users"></i></div>
+                                <div>
+                                    <p class="text-muted mb-0 small fw-bold">TOTAL USERS</p>
+                                    <h3 id="usersCount" class="fw-bold mb-0">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card stat-card shadow-sm p-3 border-start border-success border-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="icon-box bg-success-subtle text-success"><i class="fa-solid fa-building"></i></div>
+                                <div>
+                                    <p class="text-muted mb-0 small fw-bold">PROPERTIES</p>
+                                    <h3 id="propsCount" class="fw-bold mb-0">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card stat-card shadow-sm p-3 border-start border-warning border-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="icon-box bg-warning-subtle text-warning"><i class="fa-solid fa-heart"></i></div>
+                                <div>
+                                    <p class="text-muted mb-0 small fw-bold">FAVORITES</p>
+                                    <h3 id="favsCount" class="fw-bold mb-0">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- جدول آخر التحديثات -->
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="fw-bold mb-0">Recent Property Updates</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr><th>ID</th><th>Property Title</th><th>City</th><th>Price</th><th>Owner</th></tr>
+                            </thead>
+                            <tbody id="recentPropsTable">
+                                <tr><td colspan="5" class="text-center text-muted py-4">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== قسم إدارة الوكلاء (Agents) ====== -->
+            <div id="agentsSection" class="section-container">
+                <div class="row g-4">
+                    <!-- نموذج إضافة وكيل جديد -->
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <h5 class="fw-bold mb-3">Add New Agent</h5>
+                            <form id="addAgentForm">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Full Name</label>
+                                    <input type="text" id="a_name" class="form-control" placeholder="e.g. John Doe" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Email</label>
+                                    <input type="email" id="a_email" class="form-control" placeholder="name@example.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Phone Number</label>
+                                    <input type="text" id="a_phone" class="form-control" placeholder="e.g. 81772276" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label small fw-bold">Password</label>
+                                    <input type="password" id="a_pass" class="form-control" placeholder="Min. 6 characters" required minlength="6">
+                                </div>
+                                <button type="submit" id="addAgentBtn" class="btn btn-primary w-100">Create Agent Account</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- جدول الوكلاء الحاليين -->
+                    <div class="col-md-8">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <h5 class="fw-bold mb-3">Current Agents</h5>
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead class="table-light">
+                                        <tr><th>Name</th><th>Email</th><th>Phone</th><th>Action</th></tr>
+                                    </thead>
+                                    <tbody id="agentsListTable">
+                                        <tr><td colspan="4" class="text-center text-muted py-3">Loading...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== قسم جميع المستخدمين (Users) ====== -->
+            <div id="usersSection" class="section-container">
+                <div class="card border-0 shadow-sm rounded-4 p-4">
+                    <h5 class="fw-bold mb-3">All Registered Users</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr><th>User Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Action</th></tr>
+                            </thead>
+                            <tbody id="allUsersTable">
+                                <tr><td colspan="5" class="text-center text-muted py-3">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== قسم العقارات (Properties) ====== -->
+            <div id="propertiesSection" class="section-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">System Properties</h5>
+                    <span class="badge bg-primary px-3 py-2" id="totalPropsBadge">0 Properties</span>
+                </div>
+                <div class="row g-4" id="fullPropsGrid">
+                    <div class="col-12 text-center py-5 text-muted">Loading...</div>
+                </div>
+            </div>
+
+            <!-- ====== قسم التحليلات (Analytics) ====== -->
+            <div id="analyticsSection" class="section-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h5 class="fw-bold mb-1">Market Analytics</h5>
+                        <p class="text-muted small mb-0">Visual insights from your platform data</p>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">
+                        <i class="fa-solid fa-chart-pie me-1"></i> Live Data
+                    </span>
+                </div>
+
+                <!-- Row 1: Properties by City -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm rounded-4 p-4" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%); color:white;">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <h6 class="fw-bold mb-1" style="color:white;">
+                                        <i class="fa-solid fa-map-location-dot me-2" style="color:#3b82f6;"></i>Properties Distribution by City
+                                    </h6>
+                                    <small style="color:rgba(255,255,255,0.55);">Number of listings per Lebanese city</small>
+                                </div>
+                                <span class="badge px-3 py-2" style="background:rgba(59,130,246,0.2);color:#60a5fa;border-radius:20px;" id="cityChartCount">0 cities</span>
+                            </div>
+                            <div style="height: 350px;"><canvas id="cityChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Listings over time + Payment -->
+                <div class="row g-4 mb-4">
+                    <!-- Listings over time — redesigned as grouped bar chart -->
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%); color:white;">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <h6 class="fw-bold mb-1" style="color:white;">
+                                        <i class="fa-solid fa-chart-line me-2" style="color:#22c55e;"></i>Listings Added Over Time
+                                    </h6>
+                                    <small style="color:rgba(255,255,255,0.55);">Monthly new properties added to the platform</small>
+                                </div>
+                                <span class="badge px-3 py-2" style="background:rgba(34,197,94,0.2);color:#22c55e;border-radius:20px;" id="listingsTotal">0 total</span>
+                            </div>
+                            <div style="height:280px;"><canvas id="listingsChart"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- Payment preferences -->
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%); color:white;">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h6 class="fw-bold mb-1" style="color:white;">
+                                        <i class="fa-solid fa-credit-card me-2" style="color:#f59e0b;"></i>Payment Split
+                                    </h6>
+                                    <small style="color:rgba(255,255,255,0.55);">Cash vs Installments</small>
+                                </div>
+                                <span class="badge px-3 py-2" style="background:rgba(245,158,11,0.2);color:#fbbf24;border-radius:20px;" id="bookingsTotal">0 bookings</span>
+                            </div>
+                            <div style="height:200px;display:flex;align-items:center;justify-content:center;">
+                                <canvas id="paymentChart"></canvas>
+                            </div>
+                            <div class="row text-center mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,0.1);" id="paymentSummary">
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <span style="width:10px;height:10px;border-radius:3px;background:#3b82f6;display:inline-block;"></span>
+                                        <small style="color:rgba(255,255,255,0.6);font-weight:700;">Cash</small>
+                                    </div>
+                                    <h5 class="fw-bold mb-0" style="color:white;" id="cashCount">0</h5>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <span style="width:10px;height:10px;border-radius:3px;background:#f59e0b;display:inline-block;"></span>
+                                        <small style="color:rgba(255,255,255,0.6);font-weight:700;">Installments</small>
+                                    </div>
+                                    <h5 class="fw-bold mb-0" style="color:white;" id="installCount">0</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Property Types -->
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h6 class="fw-bold mb-0 text-dark">
+                                    <i class="fa-solid fa-layer-group me-2 text-purple" style="color:#8b5cf6;"></i>Property Types Distribution
+                                </h6>
+                                <span class="badge px-3 py-2" style="background:#f3f0ff;color:#8b5cf6;border-radius:20px;" id="typeChartCount">0 types</span>
+                            </div>
+                            <div style="height:280px;"><canvas id="typeChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- نهاية المحتوى الرئيسي -->
+    </div>
+</div>
+<script>
+    const API_URL = "http://127.0.0.1:8000";
+    const token = localStorage.getItem('token');
+    const userRole = localStorage.getItem('user_role');
+    let cityChart;
+    let listingsChart;
+    let paymentChart;
+    let typeChart;
+
+    // عناوين الأقسام
+    const SECTION_TITLES = {
+        overview: "Platform Overview",
+        agents: "Manage Agents",
+        users: "All Users",
+        properties: "System Properties",
+        analytics: "Market Analytics"
+    };
+    // ====================================================================
+    // حماية الصفحة: التحقق من الصلاحيات عند التحميل
+    // ====================================================================
+    window.onload = () => {
+        // التحقق من تسجيل الدخول
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // التحقق من رتبة الأدمن — منع المستخدمين العاديين والوكلاء
+        if (userRole !== 'admin') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Access Denied',
+                text: 'This page is restricted to administrators only.',
+                confirmButtonColor: '#0f172a',
+                allowOutsideClick: false
+            }).then(() => {
+                window.location.href = 'index.html';
+            });
+            return;
+        }
+        // تحميل البيانات الأولية
+        loadDashboardStats();
+        loadProperties();
+    };
+    // ====================================================================
+    // التنقل بين الأقسام
+    // ====================================================================
+    function showSection(sectionId) {
+        // إخفاء كل الأقسام وإزالة التفعيل من كل الروابط
+        document.querySelectorAll('.section-container').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+        // تفعيل القسم والرابط المحدد
+        const activeLink = document.querySelector(`a[onclick="showSection('${sectionId}')"]`);
+        if (activeLink) activeLink.classList.add('active');
+
+        document.getElementById(`${sectionId}Section`).classList.add('active');
+        document.getElementById('sectionTitle').innerText = SECTION_TITLES[sectionId] || sectionId;
+
+        // تحميل بيانات القسم
+        if (sectionId === 'overview') loadDashboardStats();
+        if (sectionId === 'agents' || sectionId === 'users') loadAllUsers();
+        if (sectionId === 'properties') loadProperties();
+        if (sectionId === 'analytics') updateCharts();
+    }
+    // ====================================================================
+    // تحميل إحصائيات لوحة التحكم
+    // ====================================================================
+    async function loadDashboardStats() {
+        try {
+            const res = await fetch(`${API_URL}/admin/stats`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!res.ok) throw new Error("Failed to load stats");
+
+            const data = await res.json();
+
+            document.getElementById('usersCount').innerText = data.users_count || 0;
+            document.getElementById('propsCount').innerText = data.properties_count || 0;
+            document.getElementById('favsCount').innerText = data.favorites_count || 0;
+
+            // بناء جدول آخر العقارات المضافة
+            const tableBody = document.getElementById('recentPropsTable');
+            if (data.recent_properties && data.recent_properties.length > 0) {
+                tableBody.innerHTML = data.recent_properties.map(p => `
+                    <tr>
+                        <td>#${escapeHtml(String(p.id).substring(0, 5))}</td>
+                        <td><b>${escapeHtml(p.title)}</b></td>
+                        <td>${escapeHtml(p.city)}</td>
+                        <td class="text-primary fw-bold">$${new Intl.NumberFormat('en-US').format(p.price)}</td>
+                        <td><span class="badge bg-secondary">${escapeHtml(p.owner_name || 'System')}</span></td>
+                    </tr>
+                `).join('');
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No properties yet</td></tr>';
+            }
+        } catch (e) {
+            console.error("Stats Error:", e);
+        }
+    }
+    // ====================================================================
+    // تحميل جميع المستخدمين والوكلاء
+    // ====================================================================
+    async function loadAllUsers() {
+        try {
+            const res = await fetch(`${API_URL}/admin/users`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!res.ok) throw new Error("Failed to load users");
+
+            const users = await res.json();
+
+            // --- جدول الوكلاء ---
+            const agents = users.filter(u => u.role === 'agent');
+            const agentsTable = document.getElementById('agentsListTable');
+            if (agentsTable) {
+                if (agents.length > 0) {
+                    agentsTable.innerHTML = agents.map(a => `
+                        <tr>
+                            <td><b>${escapeHtml(a.username)}</b></td>
+                            <td>${escapeHtml(a.email)}</td>
+                            <td><small><i class="fa-solid fa-phone me-1"></i>${escapeHtml(a.phone || 'N/A')}</small></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${a.id})">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    agentsTable.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">No agents registered yet</td></tr>';
+                }
+            }
+
+            // --- جدول جميع المستخدمين ---
+            const allUsersTable = document.getElementById('allUsersTable');
+            if (allUsersTable) {
+                allUsersTable.innerHTML = users.map(u => {
+                    // تلوين شارة الرتبة حسب النوع
+                    const roleBadge = u.role === 'admin'
+                        ? 'bg-danger-subtle text-danger'
+                        : u.role === 'agent'
+                            ? 'bg-primary-subtle text-primary'
+                            : 'bg-info-subtle text-dark';
+
+                    return `
+                    <tr>
+                        <td><b>${escapeHtml(u.username)}</b></td>
+                        <td>${escapeHtml(u.email)}</td>
+                        <td><small>${escapeHtml(u.phone || '---')}</small></td>
+                        <td><span class="badge ${roleBadge}">${escapeHtml(u.role)}</span></td>
+                        <td>
+                            ${u.role !== 'admin' ? `
+                                <button class="btn btn-sm btn-light text-danger" onclick="deleteUser(${u.id})" title="Delete user">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            ` : '<span class="text-muted small">Protected</span>'}
+                        </td>
+                    </tr>`;
+                }).join('');
+            }
+        } catch (e) {
+            console.error("Users Error:", e);
+        }
+    }
+    // ====================================================================
+    // إضافة وكيل جديد
+    // ====================================================================
+    document.getElementById('addAgentForm').onsubmit = async (e) => {
+        e.preventDefault();
+
+        const btn = document.getElementById('addAgentBtn');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Creating...';
+
+        const agentData = {
+            username: document.getElementById('a_name').value.trim(),
+            email: document.getElementById('a_email').value.trim(),
+            password: document.getElementById('a_pass').value,
+            phone: document.getElementById('a_phone').value.trim(),
+            role: "agent"
+        };
+
+        try {
+            const res = await fetch(`${API_URL}/admin/add-agent`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(agentData)
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+                Swal.fire('Success', 'Agent account created successfully!', 'success');
+                e.target.reset();
+                loadAllUsers();
+                loadDashboardStats();
+            } else {
+                // عرض رسالة الخطأ من الباك إند
+                Swal.fire('Error', result.detail || 'Failed to create agent.', 'error');
+            }
+        } catch (err) {
+            Swal.fire('Error', 'Server connection failed.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    };
+    // ====================================================================
+    // تحميل وعرض جميع العقارات
+    // ====================================================================
+    async function loadProperties() {
+        try {
+            const res = await fetch(`${API_URL}/properties/`);
+            const props = await res.json();
+
+            document.getElementById('totalPropsBadge').innerText = `${props.length} Properties`;
+            document.getElementById('propsCount').innerText = props.length;
+
+            const grid = document.getElementById('fullPropsGrid');
+
+            if (props.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-center py-5 text-muted">No properties in the system yet.</div>';
+                return;
+            }
+
+            grid.innerHTML = props.map(p => {
+                const priceFormatted = new Intl.NumberFormat('en-US').format(p.price);
+                // بناء رابط الصورة بشكل بسيط
+                const imgUrl = p.main_image
+                    ? `${API_URL}${p.main_image}`
+                    : "https://placehold.co/600x400/e2e8f0/64748b?text=No+Image";
+
+                return `
+                <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                    <div class="card property-card shadow-sm h-100">
+                        <div class="prop-img-wrapper">
+                            <img src="${imgUrl}" class="w-100 h-100" style="object-fit: cover;"
+                                 onerror="this.src='https://placehold.co/600x400/f1f5f9/64748b?text=Error'">
+                            <div class="area-badge"><i class="fa-solid fa-maximize me-1"></i>${p.area || 0} m²</div>
+                            <div class="price-tag-modern">$${priceFormatted}</div>
+                        </div>
+                        <div class="prop-details">
+                            <div class="prop-title text-truncate">${escapeHtml(p.title || 'Property')}</div>
+                            <div class="prop-location">
+                                <i class="fa-solid fa-location-dot me-1 text-primary"></i> ${escapeHtml(p.city || 'Lebanon')}
+                            </div>
+                            <button class="btn-delete-full" onclick="deleteProperty('${p.id}')">
+                                <i class="fa-solid fa-trash-can me-2"></i> Delete Property
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        } catch (e) {
+            console.error("Properties Load Error:", e);
+            document.getElementById('fullPropsGrid').innerHTML =
+                '<div class="col-12 text-center py-5 text-danger">Failed to load properties.</div>';
+        }
+    }
+    // ====================================================================
+    // الرسوم البيانية — تحليلات السوق
+    // ====================================================================
+    async function updateCharts() {
+        await buildCityChart();
+        await buildListingsChart();
+        await buildPaymentChart();
+        await buildTypeChart();
+    }
+
+    // --- رسم 1: توزيع العقارات حسب المدينة (Bar Chart) ---
+    async function buildCityChart() {
+        try {
+            const res = await fetch(`${API_URL}/properties/`);
+            const props = await res.json();
+
+            const cityCounts = {};
+            props.forEach(p => {
+                const cityName = p.city
+                    ? p.city.charAt(0).toUpperCase() + p.city.slice(1)
+                    : 'Unknown';
+                cityCounts[cityName] = (cityCounts[cityName] || 0) + 1;
+            });
+
+            document.getElementById('cityChartCount').innerText = `${Object.keys(cityCounts).length} cities`;
+
+            const ctx = document.getElementById('cityChart').getContext('2d');
+            if (cityChart) cityChart.destroy();
+
+            cityChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(cityCounts),
+                    datasets: [{
+                        label: 'Properties',
+                        data: Object.values(cityCounts),
+                        backgroundColor: '#3b82f6',
+                        hoverBackgroundColor: '#2563eb',
+                        borderRadius: 8,
+                        barThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(255,255,255,0.95)',
+                            titleColor: '#0f172a',
+                            bodyColor: '#3b82f6',
+                            titleFont: { size: 13, weight: '700' },
+                            bodyFont: { size: 14, weight: '700' },
+                            padding: 14,
+                            cornerRadius: 12,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.07)' },
+                            ticks: { stepSize: 1, font: { size: 12 }, color: 'rgba(255,255,255,0.5)' },
+                            border: { color: 'transparent' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 12, weight: '600' }, color: 'rgba(255,255,255,0.7)' },
+                            border: { color: 'transparent' }
+                        }
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("City chart error:", e);
+        }
+    }
+    // --- رسم 2: العقارات المضافة بمرور الوقت (Line Chart) ---
+    async function buildListingsChart() {
+        try {
+            const res = await fetch(`${API_URL}/properties/`);
+            const props = await res.json();
+
+            document.getElementById('listingsTotal').innerText = `${props.length} total`;
+
+            // Group by month
+            const monthlyCounts = {};
+            props.forEach(p => {
+                if (!p.created_at) return;
+                const date = new Date(p.created_at);
+                const key  = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
+                monthlyCounts[key] = (monthlyCounts[key] || 0) + 1;
+            });
+
+            // Build last 6 months labels even if empty
+            const now = new Date();
+            const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const labels = [], dataPoints = [];
+            for (let i = 5; i >= 0; i--) {
+                const d   = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+                labels.push(monthNames[d.getMonth()]);
+                dataPoints.push(monthlyCounts[key] || 0);
+            }
+
+            const ctx = document.getElementById('listingsChart').getContext('2d');
+            if (listingsChart) listingsChart.destroy();
+
+            // Gradient fill for the bars
+            const barGradient = ctx.createLinearGradient(0, 0, 0, 280);
+            barGradient.addColorStop(0, 'rgba(34,197,94,0.9)');
+            barGradient.addColorStop(1, 'rgba(34,197,94,0.3)');
+
+            listingsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'New listings',
+                        data: dataPoints,
+                        backgroundColor: barGradient,
+                        hoverBackgroundColor: '#22c55e',
+                        borderRadius: 10,
+                        borderSkipped: false,
+                        barThickness: 36,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(255,255,255,0.95)',
+                            titleColor: '#0f172a',
+                            bodyColor: '#22c55e',
+                            titleFont: { size: 13, weight: '700' },
+                            bodyFont: { size: 14, weight: '700' },
+                            padding: 14,
+                            cornerRadius: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: (ctx) => `${ctx.parsed.y} new propert${ctx.parsed.y === 1 ? 'y' : 'ies'}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.07)' },
+                            ticks: {
+                                color: 'rgba(255,255,255,0.5)',
+                                font: { size: 11 },
+                                stepSize: 1
+                            },
+                            border: { color: 'transparent' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: 'rgba(255,255,255,0.7)',
+                                font: { size: 12, weight: '600' }
+                            },
+                            border: { color: 'transparent' }
+                        }
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("Listings chart error:", e);
+        }
+    }
+
+    // Property Types Horizontal Bar Chart
+    async function buildTypeChart() {
+        try {
+            const res   = await fetch(`${API_URL}/properties/`);
+            const props = await res.json();
+
+            const typeCounts = {};
+            props.forEach(p => {
+                const t = p.property_type || 'Unknown';
+                typeCounts[t] = (typeCounts[t] || 0) + 1;
+            });
+
+            const sorted = Object.entries(typeCounts).sort((a,b) => b[1]-a[1]);
+            const labels = sorted.map(([t]) => t);
+            const values = sorted.map(([,v]) => v);
+            const colors = ['#8b5cf6','#6d28d9','#a78bfa','#7c3aed','#c4b5fd','#5b21b6','#ddd6fe','#4c1d95','#ede9fe','#3b0764'];
+
+            document.getElementById('typeChartCount').innerText = `${labels.length} type${labels.length !== 1 ? 's' : ''}`;
+
+            const ctx = document.getElementById('typeChart').getContext('2d');
+            if (typeChart) typeChart.destroy();
+
+            typeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Properties',
+                        data: values,
+                        backgroundColor: colors.slice(0, labels.length),
+                        hoverBackgroundColor: colors.map(c => c),
+                        borderRadius: 10,
+                        borderSkipped: false,
+                        barThickness: 38,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleFont: { size: 13 },
+                            bodyFont: { size: 12 },
+                            padding: 12,
+                            cornerRadius: 10,
+                            displayColors: false,
+                            callbacks: {
+                                label: (ctx) => `${ctx.parsed.x} propert${ctx.parsed.x === 1 ? 'y' : 'ies'}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                            ticks: { stepSize: 1, font: { size: 11 } },
+                            border: { color: '#e2e8f0' }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { font: { size: 13, weight: '600' }, color: '#1e293b' },
+                            border: { color: 'transparent' }
+                        }
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("Type chart error:", e);
+        }
+    }
+    // --- رسم 3: طرق الدفع (Doughnut Chart) ---
+    async function buildPaymentChart() {
+        try {
+            const res = await fetch(`${API_URL}/admin/bookings-stats`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!res.ok) throw new Error("Failed to load booking stats");
+
+            const data = await res.json();
+            const cash = data.payment_breakdown.cash || 0;
+            const install = data.payment_breakdown.installments || 0;
+
+            // تحديث العدادات في الواجهة
+            document.getElementById('bookingsTotal').innerText = `${data.total_bookings} bookings`;
+            document.getElementById('cashCount').innerText = cash;
+            document.getElementById('installCount').innerText = install;
+
+            const ctx = document.getElementById('paymentChart').getContext('2d');
+            if (paymentChart) paymentChart.destroy();
+
+            // حالة عدم وجود حجوزات
+            if (cash === 0 && install === 0) {
+                ctx.font = '14px Segoe UI, sans-serif';
+                ctx.fillStyle = '#94a3b8';
+                ctx.textAlign = 'center';
+                ctx.fillText('No bookings yet', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+
+            paymentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Full Cash', 'Installments'],
+                    datasets: [{
+                        data: [cash, install],
+                        backgroundColor: ['#3b82f6', '#f59e0b'],
+                        hoverBackgroundColor: ['#2563eb', '#d97706'],
+                        borderWidth: 0,
+                        borderRadius: 6,
+                        spacing: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleFont: { size: 13 },
+                            bodyFont: { size: 12 },
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: {
+                                label: (ctx) => {
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total > 0 ? Math.round((ctx.parsed / total) * 100) : 0;
+                                    return `${ctx.label}: ${ctx.parsed} (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("Payment chart error:", e);
+        }
+    }
+    // ====================================================================
+    // حذف عقار
+    // ====================================================================
+    async function deleteProperty(id) {
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e11d48',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Yes, delete it!'
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            const res = await fetch(`${API_URL}/properties/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                Swal.fire('Deleted!', 'Property has been removed.', 'success');
+                loadProperties();
+                loadDashboardStats();
+            } else {
+                const data = await res.json();
+                Swal.fire('Error', data.detail || 'Delete failed.', 'error');
+            }
+        } catch (e) {
+            Swal.fire('Error', 'Connection failed.', 'error');
+        }
+    }
+    // ====================================================================
+    // حذف مستخدم أو وكيل
+    // ====================================================================
+    async function deleteUser(userId) {
+        const result = await Swal.fire({
+            title: 'Delete User?',
+            text: "This will remove the account permanently.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e11d48',
+            confirmButtonText: 'Yes, delete'
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            const res = await fetch(`${API_URL}/admin/users/${userId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                Swal.fire('Deleted!', 'User has been removed.', 'success');
+                loadAllUsers();
+                loadDashboardStats();
+            } else {
+                const data = await res.json();
+                Swal.fire('Error', data.detail || 'Delete failed.', 'error');
+            }
+        } catch (e) {
+            Swal.fire('Error', 'Connection failed.', 'error');
+        }
+    }
+    // ====================================================================
+    // تسجيل الخروج
+    // ====================================================================
+    function logout() {
+        Swal.fire({
+            title: 'Logout?',
+            text: "Are you sure you want to end your session?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#0f172a',
+            confirmButtonText: 'Logout'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.clear();
+                window.location.href = 'login.html';
+            }
+        });
+    }
+    // ====================================================================
+    // دالة حماية من XSS
+    // ====================================================================
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+</script>
+</body>
+</html>

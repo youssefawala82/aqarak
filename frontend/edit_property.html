@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Property | Aqarak</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="styles/edit_property.css">
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background:#0f172a !important; padding:1rem 0; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="index.html">
+            <i class="fa-solid fa-house-chimney-auto me-2 text-primary"></i>Aqarak
+        </a>
+        <div class="ms-auto d-flex gap-2">
+            <a href="index.html"     class="nav-link-custom"><i class="fa-solid fa-house"></i><span class="d-none d-md-inline">Home</span></a>
+            <a href="dashboard.html" class="nav-link-custom"><i class="fa-solid fa-chart-line"></i><span class="d-none d-md-inline">Dashboard</span></a>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4 pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+
+            <!-- Page Header -->
+            <div class="page-header fade-up">
+                <h1 class="page-title">Edit Listing</h1>
+                <p class="page-subtitle">Update property details and save your changes.</p>
+            </div>
+
+            <!-- Main Card -->
+            <div class="edit-card fade-up">
+                <div class="card-inner">
+                    <form id="editPropertyForm">
+                        <div class="row g-4 g-lg-5">
+
+                            <!-- ── Left: Property Details ── -->
+                            <div class="col-lg-7">
+                                <div class="section-label">Property Details</div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" id="title" class="form-control" placeholder="e.g. Luxury Apartment in Downtown" required>
+                                </div>
+                                
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label">Price ($)</label>
+                                        <input type="number" id="price" class="form-control" step="0.01" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Area (sqm)</label>
+                                        <input type="number" id="area" class="form-control" step="0.1" required>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label">City</label>
+                                        <input type="text" id="city" class="form-control" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Type</label>
+                                        <select id="property_type" class="form-select">
+                                            <option value="Apartment">Apartment</option>
+                                            <option value="Villa">Villa</option>
+                                            <option value="Studio">Studio</option>
+                                            <option value="Office">Office</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label">Bedrooms</label>
+                                        <input type="number" id="bedrooms" class="form-control" min="0" value="0">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Bathrooms</label>
+                                        <input type="number" id="bathrooms" class="form-control" min="0" value="0">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">Description</label>
+                                    <textarea id="description" class="form-control" rows="5" placeholder="Describe the property features, amenities, neighborhood..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- ── Right: Image & Actions ── -->
+                            <div class="col-lg-5">
+                                <div class="section-label">Image Preview</div>
+
+                                <!-- Clickable image picker -->
+                                <div class="image-preview-wrapper mb-4 position-relative" 
+                                     style="cursor:pointer;" onclick="document.getElementById('imageFileInput').click()" 
+                                     title="Click to change image">
+                                    <img id="imagePreview" src="" alt="Property Preview" style="display:none;">
+                                    <div id="noImage" class="image-placeholder">
+                                        <i class="fa-solid fa-image"></i>
+                                        <span>Loading image...</span>
+                                    </div>
+                                    <div id="imageOverlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.5);border-radius:12px;align-items:center;justify-content:center;flex-direction:column;gap:8px;">
+                                        <i class="fa-solid fa-camera" style="color:white;font-size:1.8rem;"></i>
+                                        <span style="color:white;font-weight:600;font-size:0.9rem;">Change Image</span>
+                                    </div>
+                                </div>
+                                <input type="file" id="imageFileInput" accept="image/*" style="display:none;" onchange="previewNewImage(this)">
+                                <div id="imageChangedBadge" style="display:none;" class="alert alert-info py-2 small mb-3">
+                                    <i class="fa-solid fa-circle-check me-1"></i> New image selected — will be uploaded when you save.
+                                </div>
+
+                                <div class="form-divider"></div>
+
+                                <button type="submit" id="saveBtn" class="btn btn-save mb-3">
+                                    <i class="fa-solid fa-check"></i> Save Changes
+                                </button>
+                                <a href="dashboard.html" class="btn-cancel">
+                                    Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = "http://127.0.0.1:8000";
+    const token = localStorage.getItem('token');
+    const urlParams = new URLSearchParams(window.location.search);
+    const propertyId = urlParams.get('id');
+
+    // ── Auth guard ──
+    if (!token) window.location.href = "login.html";
+
+    if (!propertyId) {
+        Swal.fire('Error', 'No property selected to edit.', 'error')
+            .then(() => window.location.href = "dashboard.html");
+    }
+
+    // ── Fetch current property data ──
+    async function fetchProperty() {
+        try {
+            const res = await fetch(`${API_URL}/properties/${propertyId}`);
+            if (!res.ok) throw new Error("Property not found");
+            const p = await res.json();
+
+            document.getElementById('title').value = p.title;
+            document.getElementById('price').value = p.price;
+            document.getElementById('area').value = p.area;
+            document.getElementById('city').value = p.city;
+            document.getElementById('description').value = p.description || "";
+            document.getElementById('property_type').value = p.property_type;
+            document.getElementById('bedrooms').value = p.bedrooms || 0;
+            document.getElementById('bathrooms').value = p.bathrooms || 0;
+
+            // Image handling
+            const img = document.getElementById('imagePreview');
+            const noImg = document.getElementById('noImage');
+            
+            if (p.main_image) {
+                const imgUrl = p.main_image.startsWith('http') 
+                    ? p.main_image 
+                    : `${API_URL}/${p.main_image.replace(/^\//, '')}`;
+                img.src = imgUrl;
+                img.onload = () => {
+                    img.style.display = 'block';
+                    noImg.style.display = 'none';
+                };
+                img.onerror = () => {
+                    noImg.innerHTML = '<i class="fa-solid fa-image-slash"></i><span>Image failed to load</span>';
+                };
+            } else {
+                noImg.innerHTML = '<i class="fa-solid fa-image-slash"></i><span>No image uploaded</span>';
+            }
+        } catch (err) {
+            Swal.fire('Oops!', 'Could not load listing details.', 'error')
+                .then(() => window.location.href = "dashboard.html");
+        }
+    }
+
+    // ── Image picker ──
+    const imgWrapper = document.querySelector('.image-preview-wrapper');
+    const imgOverlay = document.getElementById('imageOverlay');
+    if (imgWrapper) {
+        imgWrapper.addEventListener('mouseenter', () => { if (imgOverlay) imgOverlay.style.display = 'flex'; });
+        imgWrapper.addEventListener('mouseleave', () => { if (imgOverlay) imgOverlay.style.display = 'none'; });
+    }
+
+    function previewNewImage(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img  = document.getElementById('imagePreview');
+            const noImg = document.getElementById('noImage');
+            img.src = e.target.result;
+            img.style.display = 'block';
+            noImg.style.display = 'none';
+            document.getElementById('imageChangedBadge').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // ── Handle update submission ──
+    document.getElementById('editPropertyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const saveBtn = document.getElementById('saveBtn');
+        const originalHTML = saveBtn.innerHTML;
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+        const updatedData = {
+            title: document.getElementById('title').value.trim(),
+            price: parseFloat(document.getElementById('price').value),
+            area: parseFloat(document.getElementById('area').value),
+            city: document.getElementById('city').value.trim(),
+            description: document.getElementById('description').value.trim(),
+            property_type: document.getElementById('property_type').value,
+            bedrooms: parseInt(document.getElementById('bedrooms').value) || 0,
+            bathrooms: parseInt(document.getElementById('bathrooms').value) || 0
+        };
+
+        try {
+            const res = await fetch(`${API_URL}/properties/${propertyId}`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (res.ok) {
+                // Upload new image if one was selected
+                const imageFile = document.getElementById('imageFileInput').files[0];
+                if (imageFile) {
+                    const imgFd = new FormData();
+                    imgFd.append('file', imageFile);
+                    await fetch(`${API_URL}/properties/${propertyId}/upload-image/`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: imgFd
+                    });
+                }
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Saved!',
+                    text: 'Property updated successfully.',
+                    timer: 1800,
+                    showConfirmButton: false
+                });
+                window.location.href = "dashboard.html";
+            } else {
+                const error = await res.json();
+                Swal.fire('Failed', error.detail || 'Could not update property.', 'error');
+            }
+        } catch (err) {
+            Swal.fire('Server Error', 'Could not connect to the server.', 'error');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalHTML;
+        }
+    });
+
+    window.onload = fetchProperty;
+</script>
+</body>
+</html>

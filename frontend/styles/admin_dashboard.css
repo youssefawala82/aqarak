@@ -1,0 +1,80 @@
+:root { --admin-dark: #0f172a; --admin-blue: #3b82f6; }
+body { background-color: #f1f5f9; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+
+/* --- الشريط الجانبي --- */
+.sidebar {
+    background: var(--admin-dark); min-height: 100vh; color: white;
+    padding: 20px; position: fixed; width: 250px; z-index: 1000;
+}
+.main-content {
+    margin-left: 250px; padding: 30px; width: calc(100% - 250px);
+}
+
+/* --- بطاقات الإحصائيات --- */
+.stat-card {
+    border: none; border-radius: 15px; transition: 0.3s; height: 100%;
+}
+.stat-card:hover { transform: translateY(-5px); }
+.icon-box {
+    width: 50px; height: 50px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+}
+
+/* --- روابط التنقل الجانبية --- */
+.nav-link {
+    transition: 0.2s; border-radius: 8px; margin-bottom: 5px;
+    cursor: pointer; color: #94a3b8 !important;
+}
+.nav-link:hover { background: rgba(255,255,255,0.1); color: white !important; }
+.nav-link.active { background: var(--admin-blue); color: white !important; }
+
+/* --- الأقسام --- */
+.section-container { display: none; }
+.section-container.active { display: block; }
+.table-responsive { background: white; border-radius: 12px; padding: 10px; overflow-x: auto; }
+
+/* --- بطاقات العقارات --- */
+.property-card {
+    border: none; border-radius: 20px; background: #ffffff;
+    transition: all 0.3s ease-in-out; border: 1px solid #eef2f6; overflow: hidden;
+}
+.property-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+.prop-img-wrapper { position: relative; height: 190px; overflow: hidden; background: #f1f5f9; }
+.price-tag-modern {
+    position: absolute; bottom: 12px; right: 12px; background: #3b82f6; color: white;
+    padding: 5px 12px; border-radius: 10px; font-weight: 700; font-size: 0.85rem;
+    box-shadow: 0 4px 10px rgba(59,130,246,0.3); z-index: 2;
+}
+.area-badge {
+    position: absolute; top: 12px; left: 12px;
+    background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); color: white;
+    padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; z-index: 2;
+}
+.prop-details { padding: 15px; }
+.prop-title {
+    font-size: 1rem; font-weight: 700; color: #1e293b; margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.prop-location { font-size: 0.8rem; color: #64748b; margin-bottom: 15px; }
+
+/* --- أزرار الحذف --- */
+.btn-delete-full {
+    width: 100%; background: #fff1f2; color: #e11d48;
+    padding: 10px; border-radius: 12px; font-weight: 600; font-size: 0.85rem;
+    transition: 0.2s; border: none; cursor: pointer;
+}
+.btn-delete-full:hover { background: #e11d48; color: white; }
+
+.btn-back-home {
+    background: #1e293b; color: white !important; border-radius: 8px;
+    padding: 8px 15px; text-decoration: none; transition: 0.3s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-back-home:hover { background: #334155; }
+
+/* --- التجاوب مع الشاشات الصغيرة --- */
+@media (max-width: 768px) {
+    .sidebar { width: 70px; padding: 10px; }
+    .sidebar span, .sidebar small, .sidebar h4, .sidebar hr { display: none; }
+    .main-content { margin-left: 70px; width: calc(100% - 70px); }
+}

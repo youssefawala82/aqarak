@@ -1,0 +1,28 @@
+:root { --primary: #0f172a; --accent: #3b82f6; --bg-light: #f8fafc; }
+body { background-color: var(--bg-light); font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+
+/* Sidebar Design */
+.sidebar { background: var(--primary); min-height: 100vh; color: white; transition: 0.3s; position: fixed; width: 240px; z-index: 1000; }
+.nav-link { color: #94a3b8; transition: 0.3s; margin-bottom: 8px; border-radius: 12px; padding: 12px 20px; }
+.nav-link:hover, .nav-link.active { color: white; background: rgba(255,255,255,0.1); }
+.nav-link.active { background: var(--accent); color: white; }
+
+.main-content { margin-left: 240px; padding: 40px; width: calc(100% - 240px); }
+
+/* Cards & Lists */
+.stat-card { border: none; border-radius: 20px; background: white; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border-left: 6px solid var(--accent); }
+.property-row { background: white; border-radius: 18px; margin-bottom: 1.2rem; transition: 0.3s; border: 1px solid #e2e8f0; display: flex; align-items: center; padding: 15px; }
+.property-row:hover { transform: scale(1.01); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+
+.property-img { width: 100px; height: 100px; object-fit: cover; border-radius: 15px; background: #f1f5f9; }
+
+.badge-price { background: #eff6ff; color: var(--accent); font-weight: 700; padding: 8px 15px; border-radius: 10px; font-size: 1.1rem; }
+
+.btn-circle { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: 0.2s; border: 1px solid #e2e8f0; background: white; }
+.btn-circle:hover { transform: translateY(-3px); }
+
+@media (max-width: 768px) {
+    .sidebar { width: 70px; padding: 10px; }
+    .sidebar span, .sidebar h3 { display: none; }
+    .main-content { margin-left: 70px; width: calc(100% - 70px); }
+}

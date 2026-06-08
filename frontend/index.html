@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aqarak | Home</title>
+    <!-- المكتبات الأساسية -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+
+    <!-- ====== شريط التنقل ====== -->
+    <nav class="main-nav d-flex justify-content-between align-items-center p-3 shadow-sm sticky-top">
+        <a href="index.html" class="brand fw-bold fs-4 text-decoration-none">
+            <i class="fa-solid fa-house-chimney-auto me-2 text-primary"></i>Aqarak
+        </a>
+        <div id="nav-controls" class="d-flex align-items-center gap-2"></div>
+    </nav>
+
+    <!-- ====== قسم الـ Hero ====== -->
+    <header class="hero-wrapper text-center pb-5">
+        <h1 style="font-weight: 800; font-size: 3.5rem; color: white;">Find Your Future Home</h1>
+        <p class="hero-subtitle">Advanced AI-powered real estate platform in Lebanon</p>
+    </header>
+
+    <!-- ====== صندوق البحث والفلترة ====== -->
+    <div class="container mb-5">
+        <div class="filter-box shadow-lg p-4 border">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-muted small">City</label>
+                    <select id="filterCity" class="form-select border-0 bg-light rounded-3 p-3">
+                        <option value="All">All Cities</option>
+                        <option value="Beirut">Beirut</option>
+                        <option value="Baabda">Baabda</option>
+                        <option value="Hazmieh">Hazmieh</option>
+                        <option value="Jdeideh">Jdeideh</option>
+                        <option value="Antelias">Antelias</option>
+                        <option value="Zalka">Zalka</option>
+                        <option value="Jounieh">Jounieh</option>
+                        <option value="Byblos">Byblos</option>
+                        <option value="Batroun">Batroun</option>
+                        <option value="Tripoli">Tripoli</option>
+                        <option value="Sidon">Sidon</option>
+                        <option value="Tyre">Tyre</option>
+                        <option value="Nabatieh">Nabatieh</option>
+                        <option value="Zahle">Zahle</option>
+                        <option value="Baalbek">Baalbek</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-muted small">Min Price ($)</label>
+                    <input type="number" id="minPrice" class="form-control border-0 bg-light rounded-3 p-3" placeholder="0">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-muted small">Max Price ($)</label>
+                    <input type="number" id="maxPrice" class="form-control border-0 bg-light rounded-3 p-3" placeholder="No Limit">
+                </div>
+                <div class="col-md-3">
+                    <button onclick="applyAdvancedFilters()" class="btn btn-primary w-100 p-3 rounded-3 fw-bold" style="background-color: #1e293b; border: none;">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i> Apply Filters
+                    </button>
+                </div>
+            </div>
+            <div class="mt-3">
+                <input type="text" id="searchInput" class="form-control border-0 bg-light rounded-3 p-2" placeholder="Quick search by title or city...">
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== شبكة العقارات ====== -->
+    <div class="container py-5">
+        <h3 class="fw-bold mb-4">Latest Listings</h3>
+        <div class="row g-4" id="propertyGrid">
+            <div class="loading-spinner">
+                <div class="spinner-border text-primary mb-3" role="status"></div>
+                <p class="text-muted">Loading properties...</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ====== شات بوت محسّن ====== -->
+
+    <!-- زر فتح الشات -->
+    <button class="chatbot-toggle-btn" id="chatToggleBtn" title="Chat with Aqarak">
+        <i class="fa-solid fa-robot"></i>
+        <span class="online-dot"></span>
+    </button>
+
+    <!-- نافذة الشات -->
+    <div class="chatbot-window" id="chatWindow">
+        <!-- رأس -->
+        <div class="chatbot-header">
+            <div class="chatbot-header-avatar"><i class="fa-solid fa-robot"></i></div>
+            <div class="chatbot-header-info">
+                <h6>Aqarak Smart Assistant</h6>
+                <span><i class="fa-solid fa-circle text-success" style="font-size:7px;"></i> Online — Ask me anything</span>
+            </div>
+            <button class="chatbot-close" id="chatCloseBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- الرسائل -->
+        <div class="chatbot-messages" id="chatMessages">
+            <div class="chat-bubble bot-msg">👋 Welcome to Aqarak! I can help you find properties, check prices, and navigate the platform. Try asking me something!</div>
+        </div>
+
+        <!-- اقتراحات سريعة -->
+        <div class="chat-suggestions" id="chatSuggestions">
+            <button class="chat-chip" data-msg="Show apartments in Beirut">🏠 Apartments in Beirut</button>
+            <button class="chat-chip" data-msg="Prices in Jounieh">💰 Prices in Jounieh</button>
+            <button class="chat-chip" data-msg="How do I book?">📋 How to book</button>
+            <button class="chat-chip" data-msg="Platform statistics">📊 Stats</button>
+        </div>
+
+        <!-- إدخال -->
+        <div class="chatbot-input-area">
+            <input type="text" id="chatInput" placeholder="Ask about properties, prices, booking..." autocomplete="off" maxlength="500">
+            <button class="chatbot-send-btn" id="chatSendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+
+    <!-- ====== الفوتر ====== -->
+    <footer class="site-footer">
+        <div class="container">
+            <p class="mb-1">&copy; 2026 <a href="index.html">Aqarak</a>. All rights reserved.</p>
+            <p class="mb-0 small">AI-Powered Real Estate Platform — Lebanon</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+        let allProperties = [];
+
+        // ====================================================================
+        // تهيئة الصفحة عند التحميل
+        // ====================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavbar();
+            fetchProperties();
+
+            const userRole = localStorage.getItem('user_role');
+            if (userRole === 'admin' || userRole === 'agent') {
+                fetchNotifications();
+                setInterval(fetchNotifications, 60000);
+            }
+
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = allProperties.filter(p =>
+                    p.title.toLowerCase().includes(term) ||
+                    p.city.toLowerCase().includes(term)
+                );
+                renderProperties(filtered);
+            });
+        });
+
+
+        // ====================================================================
+        // شريط التنقل الديناميكي
+        // ====================================================================
+        function updateNavbar() {
+            const navControls = document.getElementById('nav-controls');
+            const token = localStorage.getItem('token');
+            const userRole = localStorage.getItem('user_role');
+
+            if (token) {
+                let links = '';
+                let notificationBtn = '';
+
+                if (userRole === 'admin' || userRole === 'agent') {
+                    notificationBtn = `
+                        <div class="dropdown me-2">
+                            <button class="btn nav-btn-custom border-0 position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="markAllRead()">
+                                <i class="fa-solid fa-bell fs-5"></i>
+                                <span id="notif-count" class="badge bg-danger notif-badge d-none">0</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end notification-dropdown p-2" id="notif-list">
+                                <li class="text-center py-2 text-muted small">No new notifications</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                if (userRole === 'admin') {
+                    links = `
+                        <a href="dashboard.html" class="btn nav-btn-custom border-0 me-2">
+                            <i class="fa-solid fa-chart-line me-1"></i> Dashboard
+                        </a>
+                        <a href="admin_dashboard.html" class="btn btn-primary fw-bold me-2" style="background-color: #3b82f6; border: none;">
+                            <i class="fa-solid fa-gauge-high me-1"></i> Admin Panel
+                        </a>
+                        <a href="add_property.html" class="btn btn-outline-light fw-bold me-2" style="border-color: rgba(255,255,255,0.3);">
+                            <i class="fa-solid fa-plus me-1"></i> Add Property
+                        </a>
+                    `;
+                } else if (userRole === 'agent') {
+                    links = `
+                        <a href="dashboard.html" class="btn nav-btn-custom border-0 me-2">
+                            <i class="fa-solid fa-chart-line me-1"></i> Dashboard
+                        </a>
+                        <a href="add_property.html" class="btn btn-outline-light fw-bold me-2" style="border-color: rgba(255,255,255,0.3);">
+                            <i class="fa-solid fa-plus me-1"></i> Add Property
+                        </a>
+                    `;
+                } else {
+                    links = `
+                        <a href="favorites.html" class="btn nav-btn-custom fw-bold me-2 border-0">
+                            <i class="fa-solid fa-heart me-1 text-danger"></i> My Favorites
+                        </a>
+                        <a href="my_booking_requests.html" class="btn nav-btn-custom fw-bold me-2 border-0">
+                            <i class="fa-solid fa-calendar-check me-1 text-primary"></i> My Bookings
+                        </a>
+                    `;
+                }
+
+                navControls.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        ${notificationBtn}
+                        ${links}
+                        <a href="profile.html" class="btn nav-btn-custom me-2 border-0 shadow-none p-1" title="My Profile">
+                            <i class="fa-solid fa-circle-user fs-3 text-light"></i>
+                        </a>
+                        <button onclick="logout()" class="btn btn-danger px-4 fw-bold ms-2" style="border-radius: 12px;">Logout</button>
+                    </div>
+                `;
+            } else {
+                navControls.innerHTML = `
+                    <a href="login.html" class="btn btn-primary px-4 fw-bold" style="border-radius: 12px; background-color: #3b82f6; border: none;">Login / Register</a>
+                `;
+            }
+        }
+
+
+        // ====================================================================
+        // نظام الإشعارات
+        // ====================================================================
+        async function fetchNotifications() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            try {
+                const res = await fetch(`${API_URL}/notifications`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const notifications = await res.json();
+
+                const notifList = document.getElementById('notif-list');
+                const notifCount = document.getElementById('notif-count');
+                if (!notifList || !notifCount) return;
+
+                const unread = notifications.filter(n => !n.is_read);
+
+                if (unread.length > 0) {
+                    notifCount.innerText = unread.length;
+                    notifCount.classList.remove('d-none');
+                } else {
+                    notifCount.classList.add('d-none');
+                }
+
+                if (notifications.length > 0) {
+                    notifList.innerHTML = notifications.map(n => `
+                        <li class="p-2 border-bottom ${!n.is_read ? 'bg-light' : ''}">
+                            <div class="small fw-bold text-dark">${escapeHtml(n.content)}</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">${n.date}</div>
+                        </li>
+                    `).join('');
+                } else {
+                    notifList.innerHTML = '<li class="text-center py-2 text-muted small">No new notifications</li>';
+                }
+            } catch (e) {
+                console.error("Notif fetch failed:", e);
+            }
+        }
+
+        async function markAllRead() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            const notifCount = document.getElementById('notif-count');
+            if (notifCount) notifCount.classList.add('d-none');
+
+            try {
+                await fetch(`${API_URL}/notifications/read-all`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const rows = document.querySelectorAll('#notif-list li');
+                rows.forEach(row => row.classList.remove('bg-light'));
+            } catch (e) {
+                console.error("Failed to mark notifications as read:", e);
+            }
+        }
+
+
+        // ====================================================================
+        // تسجيل الخروج
+        // ====================================================================
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user_role');
+            window.location.reload();
+        }
+
+
+        // ====================================================================
+        // عرض بطاقات العقارات
+        // ====================================================================
+        function renderProperties(data) {
+            const container = document.getElementById('propertyGrid');
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center w-100 py-5">
+                        <img src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png" style="width:100px; opacity:0.5;">
+                        <p class="text-muted mt-3">No properties match your criteria.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(p => {
+                const formattedPrice = Number(p.price).toLocaleString();
+                const imageUrl = p.main_image
+                    ? `${API_URL}${p.main_image}`
+                    : 'https://via.placeholder.com/400x300?text=Property';
+
+                return `
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 aqar-card" onclick="window.location.href='details.html?id=${p.id}'">
+                        <div class="position-relative">
+                            <img src="${imageUrl}"
+                                 class="card-img-top"
+                                 style="height:200px; object-fit:cover;"
+                                 onerror="this.src='https://via.placeholder.com/400x300?text=Property'">
+                            <span class="property-badge"><i class="fa-solid fa-location-dot me-1"></i> ${escapeHtml(p.city)}</span>
+                        </div>
+                        <div class="p-3">
+                            <h6 class="fw-bold text-truncate mb-2">${escapeHtml(p.title)}</h6>
+                            <p class="fw-bold fs-5 mb-2" style="color: #2563eb;">$${formattedPrice}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="badge bg-light text-dark border-0 py-2 px-3" style="border-radius: 8px;">
+                                    <i class="fa-solid fa-ruler-combined me-1 text-primary"></i> ${p.area} m²
+                                </span>
+                                <small class="text-muted fw-semibold">${escapeHtml(p.property_type)}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+
+        // ====================================================================
+        // جلب العقارات من الباك إند
+        // ====================================================================
+        async function fetchProperties() {
+            try {
+                const res = await fetch(`${API_URL}/properties/`);
+                allProperties = await res.json();
+                renderProperties(allProperties);
+            } catch (e) {
+                console.error("Connection failed:", e);
+                document.getElementById('propertyGrid').innerHTML =
+                    '<p class="text-danger text-center w-100 py-5">Failed to load properties. Check server status.</p>';
+            }
+        }
+
+
+        // ====================================================================
+        // تطبيق الفلاتر المتقدمة
+        // ====================================================================
+        async function applyAdvancedFilters() {
+            const city = document.getElementById('filterCity').value;
+            const min = document.getElementById('minPrice').value;
+            const max = document.getElementById('maxPrice').value;
+
+            let queryParams = new URLSearchParams();
+            if (city !== "All") queryParams.append("city", city);
+            if (min) queryParams.append("min_price", min);
+            if (max) queryParams.append("max_price", max);
+
+            try {
+                const res = await fetch(`${API_URL}/properties/?${queryParams.toString()}`);
+                const filteredData = await res.json();
+                renderProperties(filteredData);
+            } catch (e) {
+                console.error("Filter request failed:", e);
+            }
+        }
+
+
+        // ====================================================================
+        // حماية من XSS
+        // ====================================================================
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+
+        // ====================================================================
+        // شات بوت محسّن — Upgraded Chatbot
+        // ====================================================================
+        (function () {
+            const toggleBtn   = document.getElementById('chatToggleBtn');
+            const chatWindow  = document.getElementById('chatWindow');
+            const closeBtn    = document.getElementById('chatCloseBtn');
+            const messagesDiv = document.getElementById('chatMessages');
+            const chatInput   = document.getElementById('chatInput');
+            const sendBtn     = document.getElementById('chatSendBtn');
+            const suggestions = document.getElementById('chatSuggestions');
+
+            let isOpen = false;
+            let isSending = false;
+
+            // فتح / إغلاق
+            toggleBtn.addEventListener('click', function () {
+                isOpen = !isOpen;
+                chatWindow.style.display = isOpen ? 'flex' : 'none';
+                if (isOpen) { chatInput.focus(); scrollChat(); }
+            });
+
+            closeBtn.addEventListener('click', function () {
+                isOpen = false;
+                chatWindow.style.display = 'none';
+            });
+
+            function scrollChat() {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
+            // إضافة رسالة (محمية من XSS)
+            function addMsg(text, type) {
+                var bubble = document.createElement('div');
+                bubble.className = 'chat-bubble ' + (type === 'user' ? 'user-msg' : 'bot-msg');
+                bubble.textContent = text;
+                messagesDiv.appendChild(bubble);
+                scrollChat();
+            }
+
+            // مؤشر الكتابة
+            function showTyping() {
+                var dots = document.createElement('div');
+                dots.className = 'typing-dots';
+                dots.id = 'typingDots';
+                dots.innerHTML = '<span></span><span></span><span></span>';
+                dots.style.display = 'block';
+                messagesDiv.appendChild(dots);
+                scrollChat();
+            }
+
+            function hideTyping() {
+                var dots = document.getElementById('typingDots');
+                if (dots) dots.remove();
+            }
+
+            function hideSuggestions() {
+                if (suggestions) suggestions.style.display = 'none';
+            }
+
+            // تحديث الاقتراحات حسب السياق
+            function updateSuggestions(userMsg, reply) {
+                if (!suggestions) return;
+                suggestions.innerHTML = '';
+                suggestions.style.display = 'flex';
+
+                var lower = userMsg.toLowerCase();
+                var items = [];
+
+                if (reply.includes('Found') || reply.includes('لقيت')) {
+                    items = [
+                        { label: '💰 Under $200K',   msg: 'Properties under 200000' },
+                        { label: '🏢 Villas only',   msg: 'Show villas' },
+                        { label: '📊 Price details', msg: 'Price breakdown' }
+                    ];
+                } else if (lower.includes('price') || lower.includes('سعر')) {
+                    items = [
+                        { label: '🏠 Beirut',   msg: 'Prices in Beirut' },
+                        { label: '🌊 Jounieh',  msg: 'Prices in Jounieh' },
+                        { label: '🏔️ Zahle',   msg: 'Prices in Zahle' }
+                    ];
+                } else if (lower.includes('book') || lower.includes('حجز')) {
+                    items = [
+                        { label: '💳 Installments',  msg: 'Tell me about installments' },
+                        { label: '📝 Register',      msg: 'How do I register?' },
+                        { label: '🔍 Find listings', msg: 'Show me available properties' }
+                    ];
+                } else {
+                    items = [
+                        { label: '🏠 Browse all',    msg: 'Show all properties' },
+                        { label: '💰 Check prices',  msg: 'Property prices in Beirut' },
+                        { label: '❓ Help',          msg: 'What can you help me with?' }
+                    ];
+                }
+
+                items.forEach(function (s) {
+                    var chip = document.createElement('button');
+                    chip.className = 'chat-chip';
+                    chip.textContent = s.label;
+                    chip.addEventListener('click', function () { sendMessage(s.msg); });
+                    suggestions.appendChild(chip);
+                });
+            }
+
+            // إرسال رسالة
+            async function sendMessage(text) {
+                text = (text || '').trim();
+                if (!text || isSending) return;
+
+                isSending = true;
+                sendBtn.disabled = true;
+                hideSuggestions();
+                addMsg(text, 'user');
+                chatInput.value = '';
+                showTyping();
+
+                try {
+                    var res = await fetch(API_URL + '/ai/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: text })
+                    });
+
+                    hideTyping();
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+                    var data = await res.json();
+                    var reply = data.reply || 'Sorry, something went wrong.';
+                    addMsg(reply, 'bot');
+                    updateSuggestions(text, reply);
+
+                } catch (err) {
+                    hideTyping();
+                    console.error('Chat error:', err);
+                    addMsg('⚠️ Could not reach the server. Please try again later.', 'bot');
+                }
+
+                isSending = false;
+                sendBtn.disabled = false;
+                chatInput.focus();
+            }
+
+            // أحداث
+            sendBtn.addEventListener('click', function () { sendMessage(chatInput.value); });
+            chatInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage(chatInput.value);
+                }
+            });
+
+            // الاقتراحات الأولية
+            suggestions.querySelectorAll('.chat-chip[data-msg]').forEach(function (chip) {
+                chip.addEventListener('click', function () {
+                    sendMessage(chip.getAttribute('data-msg'));
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

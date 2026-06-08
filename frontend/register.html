@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Aqarak</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="styles/register.css">
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+<div class="blob blob-4"></div>
+<div class="particles" id="particles"></div>
+
+<div class="register-card">
+
+    <div class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-house-chimney-auto"></i></div>
+        <span class="brand-name">Aqarak</span>
+    </div>
+
+    <h2 class="register-title">Create account</h2>
+    <p class="register-subtitle">Join Aqarak and start finding your perfect property</p>
+
+    <form id="registerForm">
+
+        <!-- Name + Phone -->
+        <div class="field-row">
+            <div class="field-group">
+                <label class="field-label">Full Name</label>
+                <div class="field-wrap">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="username" class="field-input" placeholder="John Doe" required>
+                </div>
+            </div>
+            <div class="field-group">
+                <label class="field-label">Phone</label>
+                <div class="field-wrap">
+                    <i class="fa-solid fa-phone"></i>
+                    <input type="text" id="phone" class="field-input" placeholder="+961 xx xxx xxx" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div class="field-group">
+            <label class="field-label">Email Address</label>
+            <div class="field-wrap">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="email" class="field-input" placeholder="user@example.com" required>
+            </div>
+        </div>
+
+        <!-- Password -->
+        <div class="field-group">
+            <label class="field-label">Password</label>
+            <div class="field-wrap">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" class="field-input" placeholder="Min 6 characters" required oninput="checkStrength(this.value)">
+            </div>
+            <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="field-group">
+            <label class="field-label">Confirm Password</label>
+            <div class="field-wrap">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="confirmPassword" class="field-input" placeholder="Repeat your password" required>
+            </div>
+            <div class="error-msg" id="matchError"><i class="fa-solid fa-circle-exclamation me-1"></i>Passwords do not match</div>
+        </div>
+
+        <button type="submit" id="registerBtn" class="btn-register">
+            <i class="fa-solid fa-user-plus me-2"></i> Create Account
+        </button>
+    </form>
+
+    <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <div class="footer-link">
+        Already have an account? <a href="login.html">Sign in</a>
+    </div>
+
+</div>
+
+<script>
+const API_URL = 'http://127.0.0.1:8000';
+
+const swalTheme = {
+    background: 'rgba(15,23,42,0.95)',
+    color: '#f1f5f9',
+    confirmButtonColor: '#3b82f6',
+    backdrop: 'rgba(0,0,0,0.7)'
+};
+
+// Particles
+const pc = document.getElementById('particles');
+for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `left:${Math.random()*100}%;width:${Math.random()*3+2}px;height:${Math.random()*3+2}px;animation-duration:${Math.random()*10+8}s;animation-delay:${Math.random()*10}s;`;
+    pc.appendChild(p);
+}
+
+// Password strength indicator
+function checkStrength(val) {
+    const fill = document.getElementById('strengthFill');
+    let score = 0;
+    if (val.length >= 6)  score++;
+    if (val.length >= 10) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const pct   = (score / 5) * 100;
+    const color = score <= 1 ? '#ef4444' : score <= 2 ? '#f59e0b' : score <= 3 ? '#3b82f6' : '#22c55e';
+    fill.style.width = pct + '%';
+    fill.style.background = color;
+}
+
+document.getElementById('registerForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('registerBtn');
+    const orig = btn.innerHTML;
+
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm  = document.getElementById('confirmPassword').value;
+    const matchErr = document.getElementById('matchError');
+
+    // Email validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        Swal.fire({ ...swalTheme, icon: 'warning', title: 'Invalid Email', text: 'Please use a valid email format: user@example.com' }); return;
+    }
+    // Password length
+    if (password.length < 6) {
+        Swal.fire({ ...swalTheme, icon: 'warning', title: 'Too Short', text: 'Password must be at least 6 characters.' }); return;
+    }
+    // Password match
+    if (password !== confirm) {
+        matchErr.classList.add('show'); return;
+    }
+    matchErr.classList.remove('show');
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Creating account...';
+
+    const userData = {
+        username: document.getElementById('username').value.trim(),
+        email,
+        phone: document.getElementById('phone').value.trim(),
+        password,
+        role: 'user'
+    };
+
+    try {
+        const res = await fetch(`${API_URL}/register/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userData)
+        });
+        const data = await res.json();
+        if (res.ok) {
+            await Swal.fire({ ...swalTheme, icon: 'success', title: 'Account Created!', text: 'You can now sign in to Aqarak.', timer: 1800, showConfirmButton: false });
+            window.location.href = 'login.html';
+        } else {
+            Swal.fire({ ...swalTheme, icon: 'error', title: 'Registration Failed', text: data.detail || 'Something went wrong.' });
+        }
+    } catch {
+        Swal.fire({ ...swalTheme, icon: 'error', title: 'Connection Error', text: 'Could not reach the server.' });
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+    }
+};
+</script>
+
+</body>
+</html>
