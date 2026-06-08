@@ -349,3 +349,33 @@
         max-height: 70vh;
     }
 }
+
+/* ── Mobile Responsive Fixes ── */
+@media (max-width: 991px) {
+    .nav-btn-custom span { display: none; }
+    .hero-section { padding: 40px 0 30px !important; }
+    .hero-title { font-size: 2rem !important; }
+    .hero-subtitle { font-size: 1rem !important; }
+    .search-bar-wrapper { padding: 16px !important; }
+    .filter-row { flex-wrap: wrap; gap: 8px; }
+    .filter-row select, .filter-row input { font-size: 0.88rem; }
+}
+
+@media (max-width: 768px) {
+    .hero-title { font-size: 1.7rem !important; }
+    .property-grid { grid-template-columns: 1fr !important; }
+    .section-title { font-size: 1.3rem !important; }
+    .stats-section .stat-item { min-width: 120px; }
+    .chatbot-toggle { width: 52px !important; height: 52px !important; bottom: 16px !important; right: 16px !important; }
+    .chatbot-window { width: calc(100vw - 20px) !important; right: 10px !important; bottom: 80px !important; }
+    .filter-card { padding: 16px !important; }
+    .navbar-nav-custom { gap: 4px !important; flex-wrap: wrap; }
+}
+
+@media (max-width: 576px) {
+    .hero-title { font-size: 1.4rem !important; }
+    .hero-section { padding: 24px 0 20px !important; }
+    .property-card-img { height: 180px !important; }
+    .price-badge { font-size: 1rem !important; }
+    .search-input { font-size: 0.9rem; }
+}

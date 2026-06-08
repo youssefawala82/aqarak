@@ -114,3 +114,16 @@ body { background: var(--bg-light); font-family: 'Plus Jakarta Sans', sans-serif
 .btn-save:disabled { opacity: 0.7; transform: none; }
 
 .divider { border-color: var(--border); margin: 8px 0 24px; }
+
+@media (max-width: 768px) {
+    .hero-body { padding: 0 20px 20px !important; }
+    .section-card { padding: 20px !important; }
+    .avatar-wrap { width: 90px !important; height: 90px !important; margin-top: -45px !important; }
+    .avatar-img { width: 90px !important; height: 90px !important; }
+    .avatar-placeholder { width: 90px !important; height: 90px !important; }
+    .form-title { font-size: 1.5rem; }
+}
+@media (max-width: 480px) {
+    .section-card { padding: 16px !important; }
+    .hero-body { padding: 0 16px 16px !important; }
+}

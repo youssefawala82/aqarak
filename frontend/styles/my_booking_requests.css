@@ -74,3 +74,15 @@ body { background: var(--bg-light); font-family: 'Plus Jakarta Sans', sans-serif
 /* Empty state */
 .empty-state { text-align: center; padding: 80px 20px; }
 .empty-state img { width: 130px; opacity: 0.35; margin-bottom: 20px; }
+
+@media (max-width: 768px) {
+    .booking-card { padding: 16px !important; border-radius: 16px !important; }
+    .btn-action { padding: 10px 12px; font-size: 0.82rem; }
+    .stats-card { padding: 14px !important; }
+    .filter-tabs { flex-wrap: wrap; gap: 6px; }
+    .filter-tabs .nav-link { padding: 6px 12px; font-size: 0.82rem; }
+}
+@media (max-width: 480px) {
+    .booking-card { padding: 14px !important; }
+    .property-tag { font-size: 0.82rem; }
+}

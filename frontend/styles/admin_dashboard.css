@@ -78,3 +78,18 @@ body { background-color: #f1f5f9; font-family: 'Segoe UI', sans-serif; overflow-
     .sidebar span, .sidebar small, .sidebar h4, .sidebar hr { display: none; }
     .main-content { margin-left: 70px; width: calc(100% - 70px); }
 }
+
+@media (max-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .chart-card { padding: 16px !important; }
+    .chart-card canvas { max-height: 250px !important; }
+    .admin-table { font-size: 0.82rem; }
+    .admin-table th, .admin-table td { padding: 8px 10px !important; }
+    .tab-nav { flex-wrap: wrap; gap: 6px; }
+    .tab-btn { padding: 8px 14px; font-size: 0.82rem; }
+}
+@media (max-width: 576px) {
+    .stats-grid { grid-template-columns: 1fr 1fr !important; }
+    .stat-card { padding: 14px !important; }
+    .stat-value { font-size: 1.8rem !important; }
+}

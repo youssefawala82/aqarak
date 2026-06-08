@@ -100,3 +100,16 @@ body {
     border-radius: 8px; border: none; transition: 0.3s;
 }
 .delete-trigger:hover { background: #e11d48; color: white; }
+
+@media (max-width: 768px) {
+    .booking-card { margin-bottom: 16px; }
+    .btn-comm { padding: 10px 12px; font-size: 0.82rem; }
+    .btn-group-custom { flex-direction: column; gap: 8px; }
+    .avatar-circle { width: 42px; height: 42px; font-size: 1.1rem; }
+    .stats-bar { flex-wrap: wrap; gap: 10px; }
+    .stat-box { min-width: 120px; }
+}
+@media (max-width: 480px) {
+    .booking-card { padding: 16px !important; }
+    .property-label { font-size: 0.85rem; }
+}

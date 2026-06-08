@@ -211,3 +211,19 @@ body { background-color: var(--bg); font-family: 'DM Sans', sans-serif; color: v
     .feature-item:nth-child(1), .feature-item:nth-child(2) { border-bottom: 1px solid var(--border); }
     .info-card { padding: 24px; }
 }
+
+@media (max-width: 768px) {
+    .property-images { height: 260px !important; }
+    .detail-card { padding: 16px !important; }
+    .price-section h2 { font-size: 1.8rem !important; }
+    .agent-card { padding: 16px !important; }
+    .booking-form { padding: 16px !important; }
+    .feature-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .map-container { height: 250px !important; }
+    .similar-properties .col-md-4 { width: 100% !important; }
+}
+@media (max-width: 480px) {
+    .property-images { height: 220px !important; }
+    .feature-grid { grid-template-columns: 1fr 1fr !important; }
+    .price-section h2 { font-size: 1.5rem !important; }
+}

@@ -156,3 +156,14 @@ body {
     animation: fadeInUp 0.4s ease forwards;
     opacity: 0;
 }
+
+@media (max-width: 768px) {
+    .property-card { margin-bottom: 16px; }
+    .property-card img { height: 180px !important; }
+    .card-body { padding: 14px !important; }
+    .price-tag { font-size: 1.1rem; }
+    .empty-state { padding: 40px 16px; }
+}
+@media (max-width: 480px) {
+    .property-card img { height: 160px !important; }
+}

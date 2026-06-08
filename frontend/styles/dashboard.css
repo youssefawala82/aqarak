@@ -26,3 +26,13 @@ body { background-color: var(--bg-light); font-family: 'Segoe UI', sans-serif; o
     .sidebar span, .sidebar h3 { display: none; }
     .main-content { margin-left: 70px; width: calc(100% - 70px); }
 }
+
+@media (max-width: 768px) {
+    .dashboard-card { padding: 16px !important; }
+    .property-list-item { flex-direction: column; align-items: flex-start !important; }
+    .property-list-img { width: 100% !important; height: 160px !important; border-radius: 12px; }
+    .booking-stat { min-width: 100px; }
+}
+@media (max-width: 480px) {
+    .dashboard-card { padding: 14px !important; }
+}
