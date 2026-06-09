@@ -35,7 +35,9 @@ app.add_middleware(
 
 UPLOAD_DIR = "static/images"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-app.mount("/static", StaticFiles(directory="static", check_dir=False), name="static")
+os.makedirs("static/images", exist_ok=True)
+os.makedirs("static/pics", exist_ok=True)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 models.Base.metadata.create_all(bind=engine)
 
