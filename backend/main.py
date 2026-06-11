@@ -41,7 +41,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 models.Base.metadata.create_all(bind=engine)
 
-SECRET_KEY = "aqarak_ultra_secure_key_2026"
+SECRET_KEY = "x7k2$mP9@qL5nR3vW8jY1hU6cE4tA0"
 ALGORITHM = "HS256"
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
