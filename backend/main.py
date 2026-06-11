@@ -23,7 +23,7 @@ except ImportError:
     import schemas
     from schemas import ChatRequest
 
-app = FastAPI(title="Aqarak Professional API 2026")
+app = FastAPI(title="Aqarak Professional API 2026", docs_url=None, redoc_url=None)
 
 app.add_middleware(
     CORSMiddleware,
