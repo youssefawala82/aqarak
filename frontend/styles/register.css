@@ -63,6 +63,7 @@ body {
 }
 .field-row    { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .field-wrap   { position: relative; }
+.field-wrap:has(.toggle-password) .field-input { padding-right: 42px; }
 .toggle-password {
     position: absolute;
     right: 14px; top: 50%;
