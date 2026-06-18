@@ -109,6 +109,7 @@
                 <div class="input-icon-wrap">
                     <i class="fa-solid fa-key"></i>
                     <input type="password" id="old_pass" class="form-control" placeholder="Enter current password">
+                    <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('old_pass', this)"></i>
                 </div>
             </div>
             <div class="col-md-6">
@@ -116,6 +117,7 @@
                 <div class="input-icon-wrap">
                     <i class="fa-solid fa-lock"></i>
                     <input type="password" id="new_pass" class="form-control" placeholder="Enter new password">
+                    <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('new_pass', this)"></i>
                 </div>
             </div>
         </div>
@@ -129,6 +131,19 @@
 </div>
 
 <script>
+    function togglePassword(fieldId, icon) {
+        const field = document.getElementById(fieldId);
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
     const API_URL = 'https://aqarak-backend-vehj.onrender.com';
     const token   = localStorage.getItem('token');
 

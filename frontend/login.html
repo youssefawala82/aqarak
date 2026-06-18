@@ -41,6 +41,7 @@
             <div class="field-wrap">
                 <i class="fa-solid fa-lock"></i>
                 <input type="password" id="password" class="field-input" placeholder="Enter your password" required>
+                <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
             </div>
         </div>
         <button type="submit" id="loginBtn" class="btn-signin">
@@ -61,6 +62,19 @@
 </div>
 
 <script>
+function togglePassword(fieldId, icon) {
+    const field = document.getElementById(fieldId);
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
 const API_URL = 'https://aqarak-backend-vehj.onrender.com';
 
 // Swal theme matching the project

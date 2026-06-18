@@ -97,6 +97,16 @@ body { background: var(--bg-light); font-family: 'Plus Jakarta Sans', sans-serif
 }
 .form-control:read-only { background: #f1f5f9; cursor: not-allowed; color: var(--text-muted); }
 .input-icon-wrap { position: relative; }
+.toggle-password {
+    position: absolute;
+    right: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: 0.2s;
+}
+.toggle-password:hover { color: #475569; }
 .input-icon-wrap i {
     position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
     color: var(--text-muted); font-size: 0.9rem;
