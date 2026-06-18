@@ -75,8 +75,11 @@ body {
     transform: translateY(-50%);
     color: rgba(255,255,255,0.3); font-size: 0.9rem; pointer-events: none;
 }
-.toggle-password {
-    position: absolute; right: 16px; top: 50%;
+.field-wrap i.toggle-password {
+    position: absolute !important;
+    left: auto !important;
+    right: 16px !important;
+    top: 50%;
     transform: translateY(-50%);
     color: rgba(255,255,255,0.4) !important;
     cursor: pointer; pointer-events: auto !important;
