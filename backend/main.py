@@ -488,10 +488,10 @@ def predict_price(
 
     # Step 2 — Property type multiplier
     TYPE_MULTIPLIERS = {
-        "apartment":  1.00, "villa":     1.85, "house":     1.50,
+        "apartment":  1.00, "villa":     1.85, "house":     1.10,
         "studio":     0.75, "duplex":    1.60, "penthouse": 2.20,
-        "office":     1.30, "shop":      1.15, "land":      0.55,
-        "chalet":     1.40, "townhouse": 1.45, "warehouse": 0.90,
+        "office":     1.00, "shop":      1.15, "land":      0.55,
+        "chalet":     1.50, "townhouse": 1.45, "warehouse": 0.90,
         "farm":       0.70,
     }
     type_multiplier = TYPE_MULTIPLIERS.get(property_type.lower().strip(), 1.00)
@@ -595,12 +595,10 @@ LEBANESE_CITIES = [
  
 PROPERTY_TYPES = [
     "apartment", "villa", "house", "land", "office", "shop", "studio",
-    "شقة", "فيلا", "بيت", "أرض", "مكتب", "محل", "ستوديو"
+    "duplex", "penthouse", "townhouse", "chalet", "warehouse", "farm"
 ]
- 
-TYPE_MAP = {
-    "أرض": "land", "مكتب": "office", "محل": "shop", "ستوديو": "studio"
-}
+
+TYPE_MAP = {}
  
  
 def detect_language(text):
@@ -670,7 +668,6 @@ def match_faq(message):
             best_topic = topic
     
     return best_topic if best_score > 0 else None
- 
  
 # ---------- الـ Endpoint ----------
  
@@ -791,10 +788,6 @@ async def ai_chat(request: ChatRequest, db: Session = Depends(get_db)):
     # ===== 7) Default fallback =====
     return {"reply": "🤔 I didn't quite understand that.\n\nTry:\n• 'Show apartments in Beirut'\n• 'Prices in Jounieh'\n• 'How do I book a property?'\n• 'What installment plans are available?'\n\nOr type 'help' to see everything I can do."}
  
-
-
-
-
 # ====================================================================
 # ====================================================================
 
