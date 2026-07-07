@@ -626,25 +626,24 @@ def find_type_in_message(message):
  
  
 def find_price_range(message):
-    """استخراج نطاق السعر من الرسالة"""
+    """Extract price range from message"""
     msg_lower = message.lower()
     
-    under_match = re.search(r'(?:under|less than|below|أقل من|تحت)\s*\$?([\d,]+)\s*k?', msg_lower)
+    under_match = re.search(r'(?:under|less than|below)\s*\$?([\d,]+)\s*k?', msg_lower)
     if under_match:
         val = int(under_match.group(1).replace(',', ''))
         if val < 1000:
-            val *= 1000  # 200k → 200000
+            val *= 1000
         return (0, val)
     
-    above_match = re.search(r'(?:above|more than|over|أكثر من|فوق)\s*\$?([\d,]+)\s*k?', msg_lower)
+    above_match = re.search(r'(?:above|more than|over)\s*\$?([\d,]+)\s*k?', msg_lower)
     if above_match:
         val = int(above_match.group(1).replace(',', ''))
         if val < 1000:
             val *= 1000
         return (val, 99999999)
     
-    # "between X and Y"
-    between_match = re.search(r'(?:between|بين)\s*\$?([\d,]+)\s*k?\s*(?:and|و|-)\s*\$?([\d,]+)\s*k?', msg_lower)
+    between_match = re.search(r'(?:between)\s*\$?([\d,]+)\s*k?\s*(?:and|-)\s*\$?([\d,]+)\s*k?', msg_lower)
     if between_match:
         low = int(between_match.group(1).replace(',', ''))
         high = int(between_match.group(2).replace(',', ''))
