@@ -54,7 +54,7 @@ class PropertyCreate(BaseModel):
 
 class PropertyOut(BaseModel):
     id: str
-    owner_id: int
+    owner_id: Optional[int] = None
     title: str
     description: Optional[str] = None
     price: Decimal
