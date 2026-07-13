@@ -13,8 +13,6 @@ import os
 import shutil
 import uuid
 import re
-import requests as req_lib
-
 try:
     from .database import SessionLocal, engine, get_db, Base
     from . import models, schemas
@@ -47,24 +45,6 @@ SECRET_KEY = "x7k2$mP9@qL5nR3vW8jY1hU6cE4tA0"
 ALGORITHM = "HS256"
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
-
-# ── ImageKit Configuration ──────────────────────────────────────────────
-IMAGEKIT_PRIVATE_KEY  = os.getenv("IMAGEKIT_PRIVATE_KEY",  "private_unswhhLQ+Z0imgUKCsqJEnpMolk=")
-IMAGEKIT_PUBLIC_KEY   = os.getenv("IMAGEKIT_PUBLIC_KEY",   "public_mqwzhOijy+y5eo7uWBA+xEZdsAI=")
-IMAGEKIT_URL_ENDPOINT = os.getenv("IMAGEKIT_URL_ENDPOINT", "https://ik.imagekit.io/megcym4fg")
-
-def upload_to_imagekit(file_bytes: bytes, filename: str, folder: str = "/aqarak") -> str:
-    """Upload file to ImageKit and return the permanent URL"""
-    response = req_lib.post(
-        "https://upload.imagekit.io/api/v1/files/upload",
-        auth=(IMAGEKIT_PRIVATE_KEY, ""),
-        files={"file": (filename, file_bytes)},
-        data={"fileName": filename, "folder": folder},
-    )
-    if response.status_code == 200:
-        return response.json().get("url", "")
-    raise Exception(f"ImageKit upload failed: {response.text}")
 # ====================================================================
 # ====================================================================
 
@@ -229,18 +209,25 @@ async def upload_avatar(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
+    """رفع صورة شخصية للمستخدم"""
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+    file_extension = os.path.splitext(file.filename)[1]
+    unique_filename = f"avatar_{current_user.id}_{uuid.uuid4().hex[:6]}{file_extension}"
+    file_path = os.path.join(UPLOAD_DIR, unique_filename)
+
     try:
-        file_bytes = await file.read()
-        file_extension = os.path.splitext(file.filename)[1]
-        unique_filename = f"avatar_{current_user.id}_{uuid.uuid4().hex[:6]}{file_extension}"
-        image_url = upload_to_imagekit(file_bytes, unique_filename, folder="/aqarak/avatars")
-        current_user.profile_image = image_url
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        current_user.profile_image = f"/static/images/{unique_filename}"
         db.commit()
         db.refresh(current_user)
-        return {"message": "Avatar updated", "url": image_url}
-    except Exception as e:
+
+        return {"message": "Avatar updated", "url": current_user.profile_image}
+    except Exception:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal Server Error during file upload")
 
 
 @app.post("/users/change-password")
@@ -450,27 +437,30 @@ def delete_property(
 
 
 @app.post("/properties/{property_id}/upload-image/")
-async def upload_property_image(
+def upload_property_image(
     property_id: str,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
+    """رفع صورة رئيسية لعقار"""
     prop = db.query(models.Property).filter(models.Property.id == property_id).first()
     if not prop:
         raise HTTPException(status_code=404, detail="Property not found")
+
     if prop.owner_id != current_user.id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Access denied")
-    try:
-        file_bytes = await file.read()
-        file_extension = os.path.splitext(file.filename)[1]
-        unique_filename = f"property_{property_id}_{uuid.uuid4().hex[:6]}{file_extension}"
-        image_url = upload_to_imagekit(file_bytes, unique_filename, folder="/aqarak/properties")
-        prop.main_image = image_url
-        db.commit()
-        return {"status": "success", "url": image_url}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+
+    file_extension = os.path.splitext(file.filename)[1]
+    unique_filename = f"{property_id}_{uuid.uuid4().hex[:6]}{file_extension}"
+    file_path = os.path.join(UPLOAD_DIR, unique_filename)
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    prop.main_image = f"/static/images/{unique_filename}"
+    db.commit()
+    return {"status": "success", "url": prop.main_image}
 
 
 
